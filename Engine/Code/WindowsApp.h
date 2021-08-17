@@ -3,6 +3,9 @@
 #include <d3dx11.h>
 #include <d3dcompiler.h>
 #include <xnamath.h>
+#include "imgui.h"
+#include "imgui_impl_win32.h"
+#include "imgui_impl_dx11.h"
 
 class WindowsApp
 {
@@ -14,6 +17,7 @@ private:
 	D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_11_0;
 	ID3D11DeviceContext* context = nullptr;
 	ID3D11RenderTargetView* renderTargetView;
+	HWND handleWindow;
 
 public:
 	__forceinline ~WindowsApp();
@@ -36,6 +40,8 @@ WindowsApp::~WindowsApp()
 HRESULT WindowsApp::InitializeDevice(HWND hwnd)
 {
 	HRESULT hr = S_OK;
+
+	handleWindow = hwnd;
 
 	RECT rc;
 	GetClientRect(hwnd, &rc);
@@ -107,6 +113,13 @@ HRESULT WindowsApp::InitializeDevice(HWND hwnd)
 	vp.TopLeftX = 0;
 	vp.TopLeftY = 0;
 	context->RSSetViewports(1, &vp);
+
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	ImGui_ImplWin32_Init(hwnd);
+	ImGui_ImplDX11_Init(device, context);
+	ImGui::StyleColorsDark();
 }
 
 void WindowsApp::Update()
@@ -117,6 +130,14 @@ void WindowsApp::Render()
 {
 	float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f };
 	context->ClearRenderTargetView(renderTargetView, ClearColor);
+
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+	ImGui::Begin("test");
+	ImGui::End();
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
 	swapChain->Present(0, 0);
 }
