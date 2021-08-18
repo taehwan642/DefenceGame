@@ -18,6 +18,9 @@
     <Filter Include="Windows\Resource">
       <UniqueIdentifier>{1929fe9d-ce26-4965-8a96-6c10736212bd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{0c692d21-6536-4f7a-baaa-321a19a4faba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -98,5 +101,10 @@
     <ResourceCompile Include="Engine.rc">
       <Filter>Windows\Resource</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="testShader.fx">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
