@@ -3,6 +3,7 @@
 #include <d3dx11.h>
 #include <d3dcompiler.h>
 #include <xnamath.h>
+#include <string>
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
@@ -146,7 +147,7 @@ HRESULT WindowsApp::InitializeDevice(HWND hwnd)
 	context->RSSetViewports(1, &vp);
 
 	ID3DBlob* vsBlob = nullptr;
-	if (FAILED(CompileShaderFromFile(L"testShader.fx", "VS", "vs_4_0", &vsBlob)))
+	if (FAILED(CompileShaderFromFile(L"testShader.fx", "VS", "vs_5_0", &vsBlob)))
 	{
 		MessageBox(NULL, L"fx파일 컴파일 실패", L"error", MB_OK);
 		return E_FAIL;
@@ -175,7 +176,7 @@ HRESULT WindowsApp::InitializeDevice(HWND hwnd)
 	context->IASetInputLayout(vertexLayout);
 	ID3DBlob* psBlob = nullptr;
 
-	if (FAILED(CompileShaderFromFile(L"testShader.fx", "PS", "ps_4_0", &psBlob)))
+	if (FAILED(CompileShaderFromFile(L"testShader.fx", "PS", "ps_5_0", &psBlob)))
 	{
 		MessageBox(NULL, L"fx 컴파일 실패", L"error", MB_OK);
 		return E_FAIL;
@@ -239,10 +240,19 @@ void WindowsApp::Render()
 	context->PSSetShader(pixelShader, 0, 0);
 	context->Draw(3, 0);
 
+	static int count = 0;
+
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 	ImGui::Begin("Hierarchy");
+	
+	std::string sCount = "GameObject Count (" + std::to_string(count) + ")";
+	ImGui::Text(sCount.c_str());
+
+	if (ImGui::Button("Create GameObject"))
+		++count;
+
 	ImGui::End();
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
