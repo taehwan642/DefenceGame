@@ -1,17 +1,4 @@
 #pragma once
-#include <d3d11.h>
-#include <d3dx11.h>
-#include <d3dcompiler.h>
-#include <xnamath.h>
-#include <string>
-#include "imgui.h"
-#include "imgui_impl_win32.h"
-#include "imgui_impl_dx11.h"
-
-struct MyVertex
-{
-	XMFLOAT3 Pos;
-};
 
 class WindowsApp
 {
@@ -23,14 +10,11 @@ private:
 	D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_11_0;
 	ID3D11DeviceContext* context = nullptr;
 	ID3D11RenderTargetView* renderTargetView;
-	ID3D11VertexShader* vertexShader;
-	ID3D11InputLayout* vertexLayout;
-	ID3D11PixelShader* pixelShader;
-	ID3D11Buffer* vertexBuffer;
+
+	std::unique_ptr<MyRectangle> rect;
 
 public:
 	__forceinline ~WindowsApp();
-	__forceinline HRESULT CompileShaderFromFile(LPCWSTR fileName, LPCSTR entryPoint, LPCSTR shaderModel, ID3DBlob** blobOut);
 
 	__forceinline HRESULT InitializeDevice(HWND hwnd);
 	void Update();
@@ -45,35 +29,16 @@ WindowsApp::~WindowsApp()
 	if (swapChain) swapChain->Release();
 	if (context) context->Release();
 	if (device) device->Release();
-}
 
-HRESULT WindowsApp::CompileShaderFromFile(LPCWSTR fileName, LPCSTR entryPoint, LPCSTR shaderModel, ID3DBlob** blobOut)
-{
-	HRESULT hr = S_OK;
-	DWORD shaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
-#if defined(DEBUG) || defined(_DEBUG)
-	shaderFlags |= D3DCOMPILE_DEBUG;
-#endif
-
-	ID3DBlob* errorBlob = nullptr;
-	if (FAILED(D3DX11CompileFromFile(fileName, 0, 0, entryPoint, shaderModel, shaderFlags, 0, 0, blobOut, &errorBlob, 0)))
-	{
-		if (nullptr != errorBlob)
-		{
-			OutputDebugStringA(static_cast<char*>(errorBlob->GetBufferPointer()));
-			errorBlob->Release();
-		}
-		return E_FAIL;
-	}
-	if (nullptr != errorBlob)
-		errorBlob->Release();
-
-	return S_OK;
+	ImGui_ImplDX11_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
 }
 
 HRESULT WindowsApp::InitializeDevice(HWND hwnd)
 {
 	HRESULT hr = S_OK;
+
 
 	RECT rc;
 	GetClientRect(hwnd, &rc);
@@ -126,6 +91,8 @@ HRESULT WindowsApp::InitializeDevice(HWND hwnd)
 	if (FAILED(hr))
 		return hr;
 
+	rect = std::make_unique<MyRectangle>(device);
+
 	ID3D11Texture2D* backBuffer = nullptr;
 	if (FAILED(swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer))))
 		return E_FAIL;
@@ -146,77 +113,10 @@ HRESULT WindowsApp::InitializeDevice(HWND hwnd)
 	vp.TopLeftY = 0;
 	context->RSSetViewports(1, &vp);
 
-	ID3DBlob* vsBlob = nullptr;
-	if (FAILED(CompileShaderFromFile(L"testShader.fx", "VS", "vs_5_0", &vsBlob)))
-	{
-		MessageBox(NULL, L"fx파일 컴파일 실패", L"error", MB_OK);
-		return E_FAIL;
-	}
-	
-	if (FAILED(device->CreateVertexShader(vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), NULL, &vertexShader)))
-	{
-		vsBlob->Release();
-		return E_FAIL;
-	}
-
-	D3D11_INPUT_ELEMENT_DESC layout[] =
-	{
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0}
-	};
-	UINT numElements = ARRAYSIZE(layout);
-
-	if (FAILED(device->CreateInputLayout(layout, numElements, vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), &vertexLayout)))
-	{
-		vsBlob->Release();
-		return E_FAIL;
-	}
-
-	vsBlob->Release();
-	
-	context->IASetInputLayout(vertexLayout);
-	ID3DBlob* psBlob = nullptr;
-
-	if (FAILED(CompileShaderFromFile(L"testShader.fx", "PS", "ps_5_0", &psBlob)))
-	{
-		MessageBox(NULL, L"fx 컴파일 실패", L"error", MB_OK);
-		return E_FAIL;
-	}
-
-	if (FAILED(device->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), NULL, &pixelShader)))
-	{
-		psBlob->Release();
-		return E_FAIL;
-	}
-
-	psBlob->Release();
-
-	MyVertex vertices[] =
-	{
-		XMFLOAT3(0.0f, 0.5f, 0.5f),
-		XMFLOAT3(0.5f, -0.5f, 0.5f),
-		XMFLOAT3(-0.5f, -0.5f, 0.5f)
-	};
-
-	D3D11_BUFFER_DESC bd;
-	ZeroMemory(&bd, sizeof(bd));
-	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(MyVertex) * 3;
-	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.CPUAccessFlags = 0;
-
-	D3D11_SUBRESOURCE_DATA InitData;
-	ZeroMemory(&InitData, sizeof(InitData));
-	InitData.pSysMem = vertices;
-	
-	if (FAILED(device->CreateBuffer(&bd, &InitData, &vertexBuffer)))
-	{
-		return E_FAIL;
-	}
+	context->IASetInputLayout(rect->GetVertexLayout());
 
 	UINT stride = sizeof(MyVertex);
-	UINT offset = 0;
-
-	context->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+	context->IASetVertexBuffers(0, 1, rect->GetVertexBuffer(), rect->GetStride(), rect->GetOffset());
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	IMGUI_CHECKVERSION();
@@ -236,8 +136,8 @@ void WindowsApp::Render()
 	float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f };
 	context->ClearRenderTargetView(renderTargetView, ClearColor);
 
-	context->VSSetShader(vertexShader, 0, 0);
-	context->PSSetShader(pixelShader, 0, 0);
+	context->VSSetShader(rect->GetVertexShader(), 0, 0);
+	context->PSSetShader(rect->GetPixelShader(), 0, 0);
 	context->Draw(3, 0);
 
 	static int count = 0;

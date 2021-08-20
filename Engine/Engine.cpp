@@ -3,7 +3,6 @@
 
 #include "framework.h"
 #include "Engine.h"
-#include "WindowsApp.h"
 
 #define MAX_LOADSTRING 100
 
