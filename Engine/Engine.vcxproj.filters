@@ -68,6 +68,9 @@
     <ClInclude Include="Code\MyRectangle.h">
       <Filter>GameObjects</Filter>
     </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -95,6 +98,9 @@
       <Filter>Windows</Filter>
     </ClCompile>
     <ClCompile Include="Code\MyRectangle.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
       <Filter>GameObjects</Filter>
     </ClCompile>
   </ItemGroup>
