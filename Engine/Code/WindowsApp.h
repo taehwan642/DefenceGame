@@ -153,6 +153,9 @@ void WindowsApp::Render()
 	if (ImGui::Button("Create GameObject"))
 		++count;
 
+	bool show_demo_window = true;
+	ImGui::ShowDemoWindow(&show_demo_window);
+
 	ImGui::End();
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());

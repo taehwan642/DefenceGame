@@ -8,10 +8,11 @@ struct MyVertex
 class MyRectangle
 {
 private:
-	ID3D11VertexShader* vertexShader;
 	ID3D11InputLayout* vertexLayout;
-	ID3D11PixelShader* pixelShader;
 	ID3D11Buffer* vertexBuffer;
+
+	std::unique_ptr<MyShader> shader;
+
 	UINT stride;
 	UINT offset;
 
@@ -19,8 +20,6 @@ public:
 	ID3D11Device* device;
 	__forceinline MyRectangle(ID3D11Device* dev);
 	__forceinline ~MyRectangle();
-
-	__forceinline HRESULT CompileShaderFromFile(LPCWSTR fileName, LPCSTR entryPoint, LPCSTR shaderModel, ID3DBlob** blobOut);
 
 	__forceinline ID3D11InputLayout* GetVertexLayout();
 	__forceinline ID3D11Buffer* const* GetVertexBuffer();
@@ -31,21 +30,8 @@ public:
 };
 
 
-MyRectangle::MyRectangle(ID3D11Device* dev) : device(dev)
+MyRectangle::MyRectangle(ID3D11Device* dev) : device(dev), shader(std::make_unique<MyShader>(dev))
 {
-	device->AddRef();
-	ID3DBlob* vsBlob = nullptr;
-	if (FAILED(CompileShaderFromFile(L"testShader.fx", "VS", "vs_5_0", &vsBlob)))
-	{
-		MessageBox(NULL, L"fx파일 컴파일 실패", L"error", MB_OK);
-		return;
-	}
-
-	if (FAILED(device->CreateVertexShader(vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), NULL, &vertexShader)))
-	{
-		vsBlob->Release();
-		return;
-	}
 
 	D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
@@ -53,29 +39,11 @@ MyRectangle::MyRectangle(ID3D11Device* dev) : device(dev)
 	};
 	UINT numElements = ARRAYSIZE(layout);
 
-	if (FAILED(device->CreateInputLayout(layout, numElements, vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), &vertexLayout)))
+	if (FAILED(device->CreateInputLayout(layout, numElements, shader->GetVertexShaderBlob()->GetBufferPointer(), shader->GetVertexShaderBlob()->GetBufferSize(), &vertexLayout)))
 	{
-		vsBlob->Release();
+		MessageBox(NULL, L"레이아웃 인풋 생성 실패", L"error", MB_OK);
 		return;
 	}
-
-	vsBlob->Release();
-
-	ID3DBlob* psBlob = nullptr;
-
-	if (FAILED(CompileShaderFromFile(L"testShader.fx", "PS", "ps_5_0", &psBlob)))
-	{
-		MessageBox(NULL, L"fx 컴파일 실패", L"error", MB_OK);
-		return;
-	}
-
-	if (FAILED(device->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), NULL, &pixelShader)))
-	{
-		psBlob->Release();
-		return;
-	}
-
-	psBlob->Release();
 
 	MyVertex vertices[] =
 	{
@@ -107,34 +75,8 @@ MyRectangle::MyRectangle(ID3D11Device* dev) : device(dev)
 MyRectangle::~MyRectangle()
 {
 	device->Release();
-	if (vertexShader) vertexShader->Release();
 	if (vertexLayout) vertexLayout->Release();
-	if (pixelShader) pixelShader->Release();
 	if (vertexBuffer) vertexBuffer->Release();
-}
-
-inline HRESULT MyRectangle::CompileShaderFromFile(LPCWSTR fileName, LPCSTR entryPoint, LPCSTR shaderModel, ID3DBlob** blobOut)
-{
-	HRESULT hr = S_OK;
-	DWORD shaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
-#if defined(DEBUG) || defined(_DEBUG)
-	shaderFlags |= D3DCOMPILE_DEBUG;
-#endif
-
-	ID3DBlob* errorBlob = nullptr;
-	if (FAILED(D3DX11CompileFromFile(fileName, 0, 0, entryPoint, shaderModel, shaderFlags, 0, 0, blobOut, &errorBlob, 0)))
-	{
-		if (nullptr != errorBlob)
-		{
-			OutputDebugStringA(static_cast<char*>(errorBlob->GetBufferPointer()));
-			errorBlob->Release();
-		}
-		return E_FAIL;
-	}
-	if (nullptr != errorBlob)
-		errorBlob->Release();
-
-	return S_OK;
 }
 
 ID3D11InputLayout* MyRectangle::GetVertexLayout()
@@ -149,12 +91,12 @@ ID3D11Buffer* const* MyRectangle::GetVertexBuffer()
 
 ID3D11VertexShader* MyRectangle::GetVertexShader()
 {
-	return vertexShader;
+	return shader->GetVertexShader();
 }
 
 ID3D11PixelShader* MyRectangle::GetPixelShader()
 {
-	return pixelShader;
+	return shader->GetPixelShader();
 }
 
 const UINT* MyRectangle::GetStride()
