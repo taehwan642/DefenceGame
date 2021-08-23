@@ -68,7 +68,10 @@
     <ClInclude Include="Code\MyRectangle.h">
       <Filter>GameObjects</Filter>
     </ClInclude>
-    <ClInclude Include="MyShader.h">
+    <ClInclude Include="Includes.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\MyShader.h">
       <Filter>GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
