@@ -1,19 +1,16 @@
 #pragma once
-#include "Includes.h"
+#include "framework.h"
+#include "MyShader.h"
 
-XMMATRIX                g_World;
-XMMATRIX                g_View;
-XMMATRIX                g_Projection;
-
-struct MyVertex
-{
-	XMFLOAT3 Pos;
-	XMFLOAT4 Color;
-};
+class MyShader;
 
 class MyRectangle
 {
 private:
+	static XMMATRIX World;
+	static XMMATRIX View;
+	static XMMATRIX Projection;
+
 	ID3D11Device* device;
 	ID3D11DeviceContext* context;
 
@@ -108,14 +105,14 @@ MyRectangle::MyRectangle(ID3D11Device* dev, ID3D11DeviceContext* con) : device(d
 
 	context->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R16_UINT, 0);
 
-	g_World = XMMatrixIdentity();
+	World = XMMatrixIdentity();
 	
 	XMVECTOR Eye = XMVectorSet(0.0f, 1.0f, -5.0f, 0.0f);
 	XMVECTOR At = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	g_View = XMMatrixLookAtLH(Eye, At, Up);
+	View = XMMatrixLookAtLH(Eye, At, Up);
 
-	g_Projection = XMMatrixPerspectiveFovLH(XM_PIDIV2, 1280 / (FLOAT)720, 0.01f, 100.0f);
+	Projection = XMMatrixPerspectiveFovLH(XM_PIDIV2, 1280 / (FLOAT)720, 0.01f, 100.0f);
 }
 
 MyRectangle::~MyRectangle()
@@ -127,22 +124,7 @@ MyRectangle::~MyRectangle()
 	if (indexBuffer) indexBuffer->Release();
 }
 
-void MyRectangle::Render()
-{
-	ConstantBuffer cb;
 
-	cb.mWorld = XMMatrixTranspose(g_World);
-	cb.mView = XMMatrixTranspose(g_View);
-	cb.mProjection = XMMatrixTranspose(g_Projection);
-
-	context->UpdateSubresource(shader->GetConstantBuffer(), 0, NULL, &cb, 0, 0);
-
-	context->VSSetShader(shader->GetVertexShader(), 0, 0);
-	context->VSSetConstantBuffers(0, 1, shader->GetConstantBuffer2());
-
-	context->PSSetShader(shader->GetPixelShader(), 0, 0);
-	context->DrawIndexed(6, 0, 0);
-}
 
 ID3D11InputLayout* MyRectangle::GetVertexLayout()
 {

@@ -1,12 +1,5 @@
 #pragma once
-#include "Includes.h"
-
-struct ConstantBuffer
-{
-	XMMATRIX mWorld;
-	XMMATRIX mView;
-	XMMATRIX mProjection;
-};
+#include "framework.h"
 
 class MyShader
 {
