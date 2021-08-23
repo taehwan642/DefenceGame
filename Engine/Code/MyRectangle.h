@@ -1,26 +1,37 @@
 #pragma once
 #include "Includes.h"
 
+XMMATRIX                g_World;
+XMMATRIX                g_View;
+XMMATRIX                g_Projection;
+
 struct MyVertex
 {
 	XMFLOAT3 Pos;
+	XMFLOAT4 Color;
 };
 
 class MyRectangle
 {
 private:
+	ID3D11Device* device;
+	ID3D11DeviceContext* context;
+
 	ID3D11InputLayout* vertexLayout;
 	ID3D11Buffer* vertexBuffer;
+	ID3D11Buffer* indexBuffer;
 
 	std::unique_ptr<MyShader> shader;
 
 	UINT stride;
 	UINT offset;
-
+	
 public:
-	ID3D11Device* device;
-	__forceinline MyRectangle(ID3D11Device* dev);
+
+	__forceinline MyRectangle(ID3D11Device* dev, ID3D11DeviceContext* con);
 	__forceinline ~MyRectangle();
+
+	void Render();
 
 	__forceinline ID3D11InputLayout* GetVertexLayout();
 	__forceinline ID3D11Buffer* const* GetVertexBuffer();
@@ -31,12 +42,15 @@ public:
 };
 
 
-MyRectangle::MyRectangle(ID3D11Device* dev) : device(dev), shader(std::make_unique<MyShader>(dev))
+MyRectangle::MyRectangle(ID3D11Device* dev, ID3D11DeviceContext* con) : device(dev), context(con), shader(std::make_unique<MyShader>(dev))
 {
-
+	device->AddRef();
+	context->AddRef();
 	D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0}
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+
 	};
 	UINT numElements = ARRAYSIZE(layout);
 
@@ -46,17 +60,20 @@ MyRectangle::MyRectangle(ID3D11Device* dev) : device(dev), shader(std::make_uniq
 		return;
 	}
 
+	context->IASetInputLayout(vertexLayout);
+
 	MyVertex vertices[] =
 	{
-		XMFLOAT3(0.0f, 0.5f, 0.5f),
-		XMFLOAT3(0.5f, -0.5f, 0.5f),
-		XMFLOAT3(-0.5f, -0.5f, 0.5f)
+		{ XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) },
+		{ XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) },
+		{ XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) },
+		{ XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) },
 	};
 
 	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(bd));
 	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(MyVertex) * 3;
+	bd.ByteWidth = sizeof(MyVertex) * 4;
 	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bd.CPUAccessFlags = 0;
 
@@ -71,13 +88,60 @@ MyRectangle::MyRectangle(ID3D11Device* dev) : device(dev), shader(std::make_uniq
 
 	stride = sizeof(MyVertex);
 	offset = 0;
+
+	context->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+
+	WORD indices[] =
+	{
+		0, 1, 2,
+		0, 2, 3
+	};
+
+	// 위에서 쓴 bd의 정보를 덮어쓰고 돌려쓰기
+	bd.Usage = D3D11_USAGE_DEFAULT;
+	bd.ByteWidth = sizeof(WORD) * 6;
+	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	bd.CPUAccessFlags = 0;
+	InitData.pSysMem = indices;
+	if (FAILED(device->CreateBuffer(&bd, &InitData, &indexBuffer)))
+		return;
+
+	context->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R16_UINT, 0);
+
+	g_World = XMMatrixIdentity();
+	
+	XMVECTOR Eye = XMVectorSet(0.0f, 1.0f, -5.0f, 0.0f);
+	XMVECTOR At = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	g_View = XMMatrixLookAtLH(Eye, At, Up);
+
+	g_Projection = XMMatrixPerspectiveFovLH(XM_PIDIV2, 1280 / (FLOAT)720, 0.01f, 100.0f);
 }
 
 MyRectangle::~MyRectangle()
 {
 	device->Release();
+	context->Release();
 	if (vertexLayout) vertexLayout->Release();
 	if (vertexBuffer) vertexBuffer->Release();
+	if (indexBuffer) indexBuffer->Release();
+}
+
+void MyRectangle::Render()
+{
+	ConstantBuffer cb;
+
+	cb.mWorld = XMMatrixTranspose(g_World);
+	cb.mView = XMMatrixTranspose(g_View);
+	cb.mProjection = XMMatrixTranspose(g_Projection);
+
+	context->UpdateSubresource(shader->GetConstantBuffer(), 0, NULL, &cb, 0, 0);
+
+	context->VSSetShader(shader->GetVertexShader(), 0, 0);
+	context->VSSetConstantBuffers(0, 1, shader->GetConstantBuffer2());
+
+	context->PSSetShader(shader->GetPixelShader(), 0, 0);
+	context->DrawIndexed(6, 0, 0);
 }
 
 ID3D11InputLayout* MyRectangle::GetVertexLayout()

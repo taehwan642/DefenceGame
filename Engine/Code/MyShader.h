@@ -1,11 +1,19 @@
 #pragma once
 #include "Includes.h"
 
+struct ConstantBuffer
+{
+	XMMATRIX mWorld;
+	XMMATRIX mView;
+	XMMATRIX mProjection;
+};
+
 class MyShader
 {
 private:
 	ID3D11VertexShader* vertexShader;
 	ID3D11PixelShader* pixelShader;
+	ID3D11Buffer* constantBuffer;
 
 	ID3DBlob* vsBlob;
 
@@ -21,6 +29,8 @@ public:
 	__forceinline ID3D11PixelShader* GetPixelShader();
 	__forceinline ID3DBlob* GetVertexShaderBlob();
 
+	__forceinline ID3D11Buffer* GetConstantBuffer();
+	__forceinline ID3D11Buffer* const* GetConstantBuffer2();
 };
 
 MyShader::MyShader(ID3D11Device* dev) : device(dev)
@@ -54,14 +64,27 @@ MyShader::MyShader(ID3D11Device* dev) : device(dev)
 	}
 
 	psBlob->Release();
+
+	D3D11_BUFFER_DESC bd;
+	ZeroMemory(&bd, sizeof(bd));
+	bd.Usage = D3D11_USAGE_DEFAULT;
+	bd.ByteWidth = sizeof(ConstantBuffer);
+	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bd.CPUAccessFlags = 0;
+	if (FAILED(device->CreateBuffer(&bd, NULL, &constantBuffer)))
+	{
+		MessageBox(NULL, L"콘스탄트버퍼 만들기 실패", L"error", MB_OK);
+		return;
+	}
 }
 
 MyShader::~MyShader()
 {
+	device->Release();
 	if (vertexShader) vertexShader->Release();
 	if (vsBlob) vsBlob->Release();
 	if (pixelShader) pixelShader->Release();
-
+	if (constantBuffer) constantBuffer->Release();
 }
 
 HRESULT MyShader::CompileShaderFromFile(LPCWSTR fileName, LPCSTR entryPoint, LPCSTR shaderModel, ID3DBlob** blobOut)
@@ -101,4 +124,14 @@ ID3D11PixelShader* MyShader::GetPixelShader()
 ID3DBlob* MyShader::GetVertexShaderBlob()
 {
 	return vsBlob;
+}
+
+ID3D11Buffer* MyShader::GetConstantBuffer()
+{
+	return constantBuffer;
+}
+
+ID3D11Buffer* const* MyShader::GetConstantBuffer2()
+{
+	return &constantBuffer;
 }

@@ -92,7 +92,7 @@ HRESULT WindowsApp::InitializeDevice(HWND hwnd)
 	if (FAILED(hr))
 		return hr;
 
-	rect = std::make_unique<MyRectangle>(device);
+	rect = std::make_unique<MyRectangle>(device, context);
 
 	ID3D11Texture2D* backBuffer = nullptr;
 	if (FAILED(swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer))))
@@ -114,10 +114,7 @@ HRESULT WindowsApp::InitializeDevice(HWND hwnd)
 	vp.TopLeftY = 0;
 	context->RSSetViewports(1, &vp);
 
-	context->IASetInputLayout(rect->GetVertexLayout());
-
 	UINT stride = sizeof(MyVertex);
-	context->IASetVertexBuffers(0, 1, rect->GetVertexBuffer(), rect->GetStride(), rect->GetOffset());
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	IMGUI_CHECKVERSION();
@@ -137,9 +134,9 @@ void WindowsApp::Render()
 	float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f };
 	context->ClearRenderTargetView(renderTargetView, ClearColor);
 
-	context->VSSetShader(rect->GetVertexShader(), 0, 0);
-	context->PSSetShader(rect->GetPixelShader(), 0, 0);
-	context->Draw(3, 0);
+	rect->Render();
+
+	
 
 	static int count = 0;
 
