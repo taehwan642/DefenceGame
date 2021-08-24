@@ -1,7 +1,6 @@
 #include "MyShader.h"
 #include "MyRectangle.h"
 
-XMMATRIX MyRectangle::World;
 XMMATRIX MyRectangle::View;
 XMMATRIX MyRectangle::Projection;
 
@@ -9,7 +8,7 @@ void MyRectangle::Render()
 {
 	ConstantBuffer cb;
 
-	cb.mWorld = XMMatrixTranspose(World);
+	cb.mWorld = XMMatrixTranspose(transform->GetMatrix());
 	cb.mView = XMMatrixTranspose(View);
 	cb.mProjection = XMMatrixTranspose(Projection);
 

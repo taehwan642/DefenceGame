@@ -1,13 +1,13 @@
 #pragma once
 #include "framework.h"
 #include "MyShader.h"
+#include "Transform.h"
 
 class MyShader;
 
 class MyRectangle
 {
 private:
-	static XMMATRIX World;
 	static XMMATRIX View;
 	static XMMATRIX Projection;
 
@@ -19,6 +19,7 @@ private:
 	ID3D11Buffer* indexBuffer;
 
 	std::unique_ptr<MyShader> shader;
+	std::unique_ptr<Transform> transform;
 
 	UINT stride;
 	UINT offset;
@@ -39,7 +40,7 @@ public:
 };
 
 
-MyRectangle::MyRectangle(ID3D11Device* dev, ID3D11DeviceContext* con) : device(dev), context(con), shader(std::make_unique<MyShader>(dev))
+MyRectangle::MyRectangle(ID3D11Device* dev, ID3D11DeviceContext* con) : device(dev), context(con), shader(std::make_unique<MyShader>(dev)), transform(std::make_unique<Transform>())
 {
 	device->AddRef();
 	context->AddRef();
@@ -105,8 +106,6 @@ MyRectangle::MyRectangle(ID3D11Device* dev, ID3D11DeviceContext* con) : device(d
 
 	context->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R16_UINT, 0);
 
-	World = XMMatrixIdentity();
-	
 	XMVECTOR Eye = XMVectorSet(0.0f, 1.0f, -5.0f, 0.0f);
 	XMVECTOR At = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
@@ -123,8 +122,6 @@ MyRectangle::~MyRectangle()
 	if (vertexBuffer) vertexBuffer->Release();
 	if (indexBuffer) indexBuffer->Release();
 }
-
-
 
 ID3D11InputLayout* MyRectangle::GetVertexLayout()
 {
