@@ -15,7 +15,10 @@ private:
 	ID3D11DeviceContext* context = nullptr;
 	ID3D11RenderTargetView* renderTargetView;
 
-	std::unique_ptr<MyRectangle> rect;
+	std::list<std::unique_ptr<MyRectangle>> gameObjects;
+
+	int getIndex = 0;
+
 
 public:
 	__forceinline ~WindowsApp();
@@ -37,12 +40,13 @@ WindowsApp::~WindowsApp()
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
+
+	gameObjects.clear();
 }
 
 HRESULT WindowsApp::InitializeDevice(HWND hwnd)
 {
 	HRESULT hr = S_OK;
-
 
 	RECT rc;
 	GetClientRect(hwnd, &rc);
@@ -95,7 +99,8 @@ HRESULT WindowsApp::InitializeDevice(HWND hwnd)
 	if (FAILED(hr))
 		return hr;
 
-	rect = std::make_unique<MyRectangle>(device, context);
+	std::unique_ptr<MyRectangle> rect = std::make_unique<MyRectangle>(device, context);
+	gameObjects.push_back(std::move(rect));
 
 	ID3D11Texture2D* backBuffer = nullptr;
 	if (FAILED(swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer))))
@@ -127,6 +132,3 @@ HRESULT WindowsApp::InitializeDevice(HWND hwnd)
 	ImGui_ImplDX11_Init(device, context);
 	ImGui::StyleColorsDark();
 }
-
-
-
