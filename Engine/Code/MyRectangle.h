@@ -19,7 +19,7 @@ private:
 	ID3D11Buffer* indexBuffer;
 
 	std::unique_ptr<MyShader> shader;
-	std::unique_ptr<Transform> transform;
+	std::shared_ptr<Transform> transform;
 
 	UINT stride;
 	UINT offset;
@@ -35,12 +35,18 @@ public:
 	__forceinline ID3D11Buffer* const* GetVertexBuffer();
 	__forceinline ID3D11VertexShader* GetVertexShader();
 	__forceinline ID3D11PixelShader* GetPixelShader();
-	__forceinline const UINT* GetStride();
-	__forceinline const UINT* GetOffset();
+	__forceinline const UINT* GetStride() const;
+	__forceinline const UINT* GetOffset() const;
+
+	__forceinline std::shared_ptr<Transform> GetTransform();
 };
 
 
-MyRectangle::MyRectangle(ID3D11Device* dev, ID3D11DeviceContext* con) : device(dev), context(con), shader(std::make_unique<MyShader>(dev)), transform(std::make_unique<Transform>())
+MyRectangle::MyRectangle(ID3D11Device* dev, ID3D11DeviceContext* con) : 
+	device(dev), 
+	context(con), 
+	shader(std::make_unique<MyShader>(dev)), 
+	transform(std::make_shared<Transform>())
 {
 	device->AddRef();
 	context->AddRef();
@@ -143,12 +149,17 @@ ID3D11PixelShader* MyRectangle::GetPixelShader()
 	return shader->GetPixelShader();
 }
 
-const UINT* MyRectangle::GetStride()
+const UINT* MyRectangle::GetStride() const
 {
 	return &stride;
 }
 
-const UINT* MyRectangle::GetOffset()
+const UINT* MyRectangle::GetOffset() const
 {
 	return &offset;
+}
+
+std::shared_ptr<Transform> MyRectangle::GetTransform()
+{
+	return transform;
 }
