@@ -72,6 +72,9 @@
     <ClInclude Include="Code\MyShader.h">
       <Filter>Core\Shader</Filter>
     </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Core\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui_widgets.cpp">
@@ -106,6 +109,9 @@
     </ClCompile>
     <ClCompile Include="Code\MyRectangle.cpp">
       <Filter>Core\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Core\Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

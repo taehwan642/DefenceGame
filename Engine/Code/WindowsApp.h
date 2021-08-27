@@ -99,9 +99,6 @@ HRESULT WindowsApp::InitializeDevice(HWND hwnd)
 	if (FAILED(hr))
 		return hr;
 
-	std::unique_ptr<MyRectangle> rect = std::make_unique<MyRectangle>(device, context);
-	gameObjects.push_back(std::move(rect));
-
 	ID3D11Texture2D* backBuffer = nullptr;
 	if (FAILED(swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer))))
 		return E_FAIL;

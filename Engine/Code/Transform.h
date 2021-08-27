@@ -43,7 +43,7 @@ XMMATRIX Transform::GetMatrix() const
 {
 	XMMATRIX world, s, r, t;
 	s = XMMatrixScaling(scale[0], scale[1], 1);
-	r = XMMatrixRotationZ(rotation);
+	r = XMMatrixRotationZ(XMConvertToRadians(rotation));
 	t = XMMatrixTranslation(position[0], position[1], 1);
 	world = s * r * t;
 	return world;

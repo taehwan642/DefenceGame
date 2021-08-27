@@ -47,19 +47,19 @@ void WindowsApp::Render()
 
 	std::string sCount = "GameObject Count (" + std::to_string(count) + ")";
 	ImGui::Text(sCount.c_str());
-
 	ImGui::Text("%.3f ms / frame (%.f) FPS", 1000.f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 	if (ImGui::Button("Create GameObject"))
 	{
-		// Create New Rect
 		gameObjects.push_back(std::make_unique<MyRectangle>(device, context));
 		++count;
 	}
 
-	ImGui::SliderInt("set", &getIndex, 0, gameObjects.size() - 1);
-
-	
+	// gameObjects의 사이즈가 0이라면 0, 
+	int maxSize = 0;
+	if (gameObjects.size() != 0)
+		maxSize = gameObjects.size() - 1;
+	ImGui::SliderInt("Index", &getIndex, 0, maxSize);
 	ImGui::End();
 
 
@@ -68,14 +68,17 @@ void WindowsApp::Render()
 	int index = 0;
 	for (auto& iter : gameObjects)
 	{
-		if (index++ != (int)getIndex)
+		if (index++ != getIndex)
 			continue;
-		ImGui::DragFloat2("Position", iter->GetTransform()->GetPosition(), 0.1f, -5.0f, 5.0f);
-		ImGui::DragFloat2("Scale", iter->GetTransform()->GetScale(), 0.1f, -5.0f, 5.0f);
-		ImGui::DragFloat("Rotation", iter->GetTransform()->GetRotation(), 0.1f, -5.0f, 5.0f);
+
+		if (ImGui::CollapsingHeader("Transform"))
+		{
+			ImGui::DragFloat2("Position", iter->GetTransform()->GetPosition(), 0.1f, -5.0f, 5.0f);
+			ImGui::DragFloat2("Scale", iter->GetTransform()->GetScale(), 0.1f, 0.0f, 5.0f);
+			ImGui::DragFloat("Rotation", iter->GetTransform()->GetRotation(), 1.f, -360.0f, 360.0f);
+		}
 	}
 	ImGui::End();
-	
 
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
