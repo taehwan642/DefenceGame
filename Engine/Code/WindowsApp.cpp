@@ -71,12 +71,18 @@ void WindowsApp::Render()
 		if (index++ != getIndex)
 			continue;
 
+		// list 또는 map으로 이름 받고, component의 Update 받아서
+		// if문에 이름
+		// 내부 블록에 update
+
 		if (ImGui::CollapsingHeader("Transform"))
 		{
 			ImGui::DragFloat2("Position", iter->GetTransform()->GetPosition(), 0.1f, -5.0f, 5.0f);
 			ImGui::DragFloat2("Scale", iter->GetTransform()->GetScale(), 0.1f, 0.0f, 5.0f);
 			ImGui::DragFloat("Rotation", iter->GetTransform()->GetRotation(), 1.f, -360.0f, 360.0f);
 		}
+
+
 	}
 	ImGui::End();
 
