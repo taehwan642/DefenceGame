@@ -75,6 +75,9 @@
     <ClInclude Include="Texture.h">
       <Filter>Core\Component</Filter>
     </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Core\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui_widgets.cpp">
@@ -111,6 +114,9 @@
       <Filter>Core\GameObjects</Filter>
     </ClCompile>
     <ClCompile Include="Texture.cpp">
+      <Filter>Core\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
       <Filter>Core\Component</Filter>
     </ClCompile>
   </ItemGroup>

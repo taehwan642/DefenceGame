@@ -152,6 +152,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Code\MyRectangle.h" />
     <ClInclude Include="Code\MyShader.h" />
     <ClInclude Include="Code\Transform.h" />
@@ -169,6 +170,7 @@
     <ClInclude Include="Texture.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Code\MyRectangle.cpp" />
     <ClCompile Include="Code\Transform.cpp" />
     <ClCompile Include="Code\WindowsApp.cpp" />
