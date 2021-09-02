@@ -4,5 +4,8 @@
 class Camera
 {
 	XMMATRIX View;
+public:
+	void Update();
+	void GetMatrix();
 };
 
