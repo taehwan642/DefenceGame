@@ -1,7 +1,9 @@
+#include "Camera.h"
 #include "WindowsApp.h"
 
 void WindowsApp::Update()
 {
+	Camera::Update();
 }
 
 void WindowsApp::Render()
@@ -77,9 +79,9 @@ void WindowsApp::Render()
 
 		if (ImGui::CollapsingHeader("Transform"))
 		{
-			ImGui::DragFloat2("Position", iter->GetTransform()->GetPosition(), 0.1f, -5.0f, 5.0f);
-			ImGui::DragFloat2("Scale", iter->GetTransform()->GetScale(), 0.1f, 0.0f, 5.0f);
-			ImGui::DragFloat("Rotation", iter->GetTransform()->GetRotation(), 1.f, -360.0f, 360.0f);
+			ImGui::DragFloat2("Position", iter->GetTransform()->GetPositionPointer(), 0.1f, -5.0f, 5.0f);
+			ImGui::DragFloat2("Scale", iter->GetTransform()->GetScalePointer(), 0.1f, 0.0f, 5.0f);
+			ImGui::DragFloat("Rotation", iter->GetTransform()->GetRotationPointer(), 1.f, -360.0f, 360.0f);
 		}
 
 

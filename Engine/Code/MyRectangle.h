@@ -8,7 +8,6 @@ class MyShader;
 class MyRectangle
 {
 private:
-	static XMMATRIX View;
 	static XMMATRIX Projection;
 
 	ID3D11Device* device;
@@ -111,11 +110,6 @@ MyRectangle::MyRectangle(ID3D11Device* dev, ID3D11DeviceContext* con) :
 		return;
 
 	context->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R16_UINT, 0);
-
-	XMVECTOR Eye = XMVectorSet(0.0f, 1.0f, -5.0f, 0.0f);
-	XMVECTOR At = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	View = XMMatrixLookAtLH(Eye, At, Up);
 
 	Projection = XMMatrixPerspectiveFovLH(XM_PIDIV2, 1280 / (FLOAT)720, 0.01f, 100.0f);
 }

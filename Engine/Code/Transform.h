@@ -3,7 +3,6 @@
 
 class Transform
 {
-
 public:
 	float position[2];
 	float scale[2];
@@ -11,9 +10,9 @@ public:
 	
 	__forceinline explicit Transform();
 
-	__forceinline float* GetPosition();
-	__forceinline float* GetScale();
-	__forceinline float* GetRotation();
+	__forceinline float* GetPositionPointer();
+	__forceinline float* GetScalePointer();
+	__forceinline float* GetRotationPointer();
 
 	__forceinline XMMATRIX GetMatrix() const;
 };
@@ -24,17 +23,17 @@ Transform::Transform() :
 
 }
 
-float* Transform::GetPosition()
+float* Transform::GetPositionPointer()
 {
 	return position;
 }
 
-float* Transform::GetScale()
+float* Transform::GetScalePointer()
 {
 	return scale;
 }
 
-float* Transform::GetRotation()
+float* Transform::GetRotationPointer()
 {
 	return &rotation;
 }

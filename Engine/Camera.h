@@ -3,9 +3,9 @@
 
 class Camera
 {
-	XMMATRIX View;
+	static XMMATRIX View;
 public:
-	void Update();
-	void GetMatrix();
+	static void Update();
+	static XMMATRIX GetViewMatrix();
 };
 
