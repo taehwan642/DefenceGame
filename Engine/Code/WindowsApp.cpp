@@ -1,5 +1,26 @@
 #include "Camera.h"
+#include "MyRectangle.h"
 #include "WindowsApp.h"
+
+WindowsApp::WindowsApp()
+{
+}
+
+WindowsApp::~WindowsApp()
+{
+	if (context) context->ClearState();
+
+	if (renderTargetView) renderTargetView->Release();
+	if (swapChain) swapChain->Release();
+	if (context) context->Release();
+	if (device) device->Release();
+	
+	ImGui_ImplDX11_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
+
+	gameObjects.clear();
+}
 
 void WindowsApp::Update()
 {

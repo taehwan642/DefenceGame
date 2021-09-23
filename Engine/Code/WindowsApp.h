@@ -1,6 +1,5 @@
 #pragma once
 #include "framework.h"
-#include "MyRectangle.h"
 
 class MyRectangle;
 
@@ -21,28 +20,15 @@ private:
 
 
 public:
-	__forceinline ~WindowsApp();
+	WindowsApp();
+	~WindowsApp();
 
 	__forceinline HRESULT InitializeDevice(HWND hwnd);
 	void Update();
 	void Render();
 };
 
-WindowsApp::~WindowsApp()
-{
-	if (context) context->ClearState();
 
-	if (renderTargetView) renderTargetView->Release();
-	if (swapChain) swapChain->Release();
-	if (context) context->Release();
-	if (device) device->Release();
-
-	ImGui_ImplDX11_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
-
-	gameObjects.clear();
-}
 
 HRESULT WindowsApp::InitializeDevice(HWND hwnd)
 {
