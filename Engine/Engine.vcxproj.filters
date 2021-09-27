@@ -72,10 +72,10 @@
     <ClInclude Include="Code\MyShader.h">
       <Filter>Core\Shader</Filter>
     </ClInclude>
-    <ClInclude Include="Texture.h">
+    <ClInclude Include="Code\Camera.h">
       <Filter>Core\Component</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h">
+    <ClInclude Include="Code\Texture.h">
       <Filter>Core\Component</Filter>
     </ClInclude>
   </ItemGroup>
@@ -113,10 +113,10 @@
     <ClCompile Include="Code\MyRectangle.cpp">
       <Filter>Core\GameObjects</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.cpp">
+    <ClCompile Include="Code\Camera.cpp">
       <Filter>Core\Component</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
+    <ClCompile Include="Code\Texture.cpp">
       <Filter>Core\Component</Filter>
     </ClCompile>
   </ItemGroup>

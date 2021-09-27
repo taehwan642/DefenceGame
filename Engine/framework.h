@@ -19,25 +19,30 @@
 #include <memory.h>
 #include <tchar.h>
 
-#include <d3d11.h>
-#include <d3dx11.h>
+#include <d3d11_1.h>
 #include <d3dcompiler.h>
-#include <xnamath.h>
+#include <DirectXMath.h>
+#include <directxcolors.h>
 #include <string>
 #include <list>
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
 
+using Float3 = DirectX::XMFLOAT3;
+using Float4 = DirectX::XMFLOAT4;
+using Matrix = DirectX::XMMATRIX;
+using Vector = DirectX::XMVECTOR;
+
 struct MyVertex
 {
-	XMFLOAT3 Pos;
-	XMFLOAT4 Color;
+	Float3 Pos;
+	Float4 Color;
 };
 
 struct ConstantBuffer
 {
-	XMMATRIX mWorld;
-	XMMATRIX mView;
-	XMMATRIX mProjection;
+	Matrix mWorld;
+	Matrix mView;
+	Matrix mProjection;
 };

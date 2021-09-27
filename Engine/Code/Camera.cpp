@@ -1,15 +1,15 @@
 #include "Camera.h"
-XMMATRIX Camera::View;
+Matrix Camera::View;
 
 void Camera::Update()
 {
-	XMVECTOR Eye = XMVectorSet(0.0f, 1.0f, -5.0f, 0.0f);
-	XMVECTOR At = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	View = XMMatrixLookAtLH(Eye, At, Up);
+	Vector Eye = DirectX::XMVectorSet(0.0f, 1.0f, -5.0f, 0.0f);
+	Vector At = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	Vector Up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	View = DirectX::XMMatrixLookAtLH(Eye, At, Up);
 }
 
-XMMATRIX Camera::GetViewMatrix()
+Matrix Camera::GetViewMatrix()
 {
 	return View;
 }

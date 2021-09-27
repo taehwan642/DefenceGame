@@ -4,6 +4,7 @@
 
 WindowsApp::WindowsApp()
 {
+
 }
 
 WindowsApp::~WindowsApp()

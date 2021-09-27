@@ -89,7 +89,7 @@ HRESULT MyShader::CompileShaderFromFile(LPCWSTR fileName, LPCSTR entryPoint, LPC
 #endif
 
 	ID3DBlob* errorBlob = nullptr;
-	if (FAILED(D3DX11CompileFromFile(fileName, 0, 0, entryPoint, shaderModel, shaderFlags, 0, 0, blobOut, &errorBlob, 0)))
+	if (FAILED(D3DCompileFromFile(fileName, nullptr, nullptr, entryPoint, shaderModel, shaderFlags, 0, blobOut, &errorBlob)))
 	{
 		if (nullptr != errorBlob)
 		{
