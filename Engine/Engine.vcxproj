@@ -107,7 +107,7 @@
       <ShaderModel>5.0</ShaderModel>
     </FxCompile>
     <Manifest>
-      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+      <EnableDpiAwareness>false</EnableDpiAwareness>
     </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -156,6 +156,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Code\Camera.h" />
+    <ClInclude Include="Code\DDSTextureLoader.h" />
     <ClInclude Include="Code\MyRectangle.h" />
     <ClInclude Include="Code\MyShader.h" />
     <ClInclude Include="Code\Texture.h" />
@@ -174,7 +175,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\Camera.cpp" />
+    <ClCompile Include="Code\DDSTextureLoader.cpp" />
     <ClCompile Include="Code\MyRectangle.cpp" />
+    <ClCompile Include="Code\MyShader.cpp" />
     <ClCompile Include="Code\Texture.cpp" />
     <ClCompile Include="Code\Transform.cpp" />
     <ClCompile Include="Code\WindowsApp.cpp" />

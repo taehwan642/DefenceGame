@@ -28,6 +28,9 @@
     <Filter Include="Core\UI\imgui">
       <UniqueIdentifier>{f0e906a5-825e-4c5d-97a2-8cdca027f8d8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Loader">
+      <UniqueIdentifier>{45254d45-087f-4a1d-9ee9-755818fbb449}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -78,6 +81,9 @@
     <ClInclude Include="Code\Texture.h">
       <Filter>Core\Component</Filter>
     </ClInclude>
+    <ClInclude Include="Code\DDSTextureLoader.h">
+      <Filter>Core\Loader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui_widgets.cpp">
@@ -118,6 +124,12 @@
     </ClCompile>
     <ClCompile Include="Code\Texture.cpp">
       <Filter>Core\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\DDSTextureLoader.cpp">
+      <Filter>Core\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\MyShader.cpp">
+      <Filter>Core\Shader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

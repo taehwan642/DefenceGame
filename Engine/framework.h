@@ -23,6 +23,7 @@
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
 #include <directxcolors.h>
+#include "DDSTextureLoader.h"
 #include <string>
 #include <list>
 #include "imgui.h"

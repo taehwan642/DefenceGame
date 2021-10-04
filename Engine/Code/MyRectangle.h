@@ -8,8 +8,6 @@ class MyShader;
 class MyRectangle
 {
 private:
-	static Matrix Projection;
-
 	ID3D11Device* device;
 	ID3D11DeviceContext* context;
 
@@ -110,8 +108,6 @@ MyRectangle::MyRectangle(ID3D11Device* dev, ID3D11DeviceContext* con) :
 		return;
 
 	context->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R16_UINT, 0);
-
-	Projection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2, 1280 / (FLOAT)720, 0.01f, 100.0f);
 }
 
 MyRectangle::~MyRectangle()

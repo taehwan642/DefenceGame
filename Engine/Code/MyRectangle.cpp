@@ -1,7 +1,6 @@
 #include "MyShader.h"
 #include "Camera.h"
 #include "MyRectangle.h"
-Matrix MyRectangle::Projection;
 
 void MyRectangle::Render()
 {
@@ -9,7 +8,7 @@ void MyRectangle::Render()
 
 	cb.mWorld = DirectX::XMMatrixTranspose(transform->GetMatrix());
 	cb.mView = DirectX::XMMatrixTranspose(Camera::GetViewMatrix());
-	cb.mProjection = DirectX::XMMatrixTranspose(Projection);
+	cb.mProjection = DirectX::XMMatrixTranspose(Camera::GetProjectionMatrix());
 
 	context->UpdateSubresource(shader->GetConstantBuffer(), 0, NULL, &cb, 0, 0);
 
@@ -17,5 +16,8 @@ void MyRectangle::Render()
 	context->VSSetConstantBuffers(0, 1, shader->GetConstantBuffer2());
 
 	context->PSSetShader(shader->GetPixelShader(), 0, 0);
+	//context->PSSetConstantBuffers(0, 1, shader->GetConstantBuffer2());
+	//context->PSSetShaderResources(0, 1, )
+
 	context->DrawIndexed(6, 0, 0);
 }
