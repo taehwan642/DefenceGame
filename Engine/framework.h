@@ -30,6 +30,7 @@
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
 
+using Float2 = DirectX::XMFLOAT2;
 using Float3 = DirectX::XMFLOAT3;
 using Float4 = DirectX::XMFLOAT4;
 using Matrix = DirectX::XMMATRIX;
@@ -38,7 +39,7 @@ using Vector = DirectX::XMVECTOR;
 struct MyVertex
 {
 	Float3 Pos;
-	Float4 Color;
+	Float2 UV;
 };
 
 struct ConstantBuffer

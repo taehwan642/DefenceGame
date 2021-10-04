@@ -128,9 +128,6 @@
     <ClCompile Include="Code\DDSTextureLoader.cpp">
       <Filter>Core\Loader</Filter>
     </ClCompile>
-    <ClCompile Include="Code\MyShader.cpp">
-      <Filter>Core\Shader</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine.ico">

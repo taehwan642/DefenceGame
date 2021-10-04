@@ -177,7 +177,6 @@
     <ClCompile Include="Code\Camera.cpp" />
     <ClCompile Include="Code\DDSTextureLoader.cpp" />
     <ClCompile Include="Code\MyRectangle.cpp" />
-    <ClCompile Include="Code\MyShader.cpp" />
     <ClCompile Include="Code\Texture.cpp" />
     <ClCompile Include="Code\Transform.cpp" />
     <ClCompile Include="Code\WindowsApp.cpp" />

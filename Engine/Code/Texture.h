@@ -6,9 +6,17 @@ class Texture
 	ID3D11ShaderResourceView* textureRV;
 	ID3D11SamplerState* samplerState;
 public:
+    __forceinline ~Texture();
+
 	__forceinline HRESULT Initialize(ID3D11Device* device, const wchar_t* filename);
-	void Render();
+	void Render(ID3D11DeviceContext* context);
 };
+
+Texture::~Texture()
+{
+    textureRV->Release();
+    samplerState->Release();
+}
 
 HRESULT Texture::Initialize(ID3D11Device* device, const wchar_t* filename)
 {

@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include "Transform.h"
 #include "MyRectangle.h"
 #include "WindowsApp.h"
 

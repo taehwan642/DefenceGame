@@ -26,7 +26,7 @@ public:
 	__forceinline ID3D11Buffer* const* GetConstantBuffer2();
 };
 
-MyShader::MyShader(ID3D11Device* dev) : device(dev)
+MyShader::MyShader(ID3D11Device* dev) : device(dev), vsBlob(nullptr)
 {
 	device->AddRef();
 	vsBlob = nullptr;
