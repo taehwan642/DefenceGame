@@ -11,6 +11,7 @@ private:
 	ID3D11Device* device;
 	ID3D11DeviceContext* context;
 
+	// Buffer를 가지는 클래스(컴포넌트)를 하나 만들기.
 	ID3D11InputLayout* vertexLayout;
 	ID3D11Buffer* vertexBuffer;
 	ID3D11Buffer* indexBuffer;
