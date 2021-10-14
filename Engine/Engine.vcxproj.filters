@@ -84,7 +84,7 @@
     <ClInclude Include="Code\DDSTextureLoader.h">
       <Filter>Core\Loader</Filter>
     </ClInclude>
-    <ClInclude Include="Buffer.h">
+    <ClInclude Include="Code\Buffer.h">
       <Filter>Core\Component</Filter>
     </ClInclude>
   </ItemGroup>
@@ -131,7 +131,7 @@
     <ClCompile Include="Code\DDSTextureLoader.cpp">
       <Filter>Core\Loader</Filter>
     </ClCompile>
-    <ClCompile Include="Buffer.cpp">
+    <ClCompile Include="Code\Buffer.cpp">
       <Filter>Core\Component</Filter>
     </ClCompile>
   </ItemGroup>

@@ -4,6 +4,7 @@
 class Transform;
 class MyShader;
 class Texture;
+class Buffer;
 
 class MyRectangle
 {
@@ -12,16 +13,10 @@ private:
 	ID3D11DeviceContext* context;
 
 	// Buffer를 가지는 클래스(컴포넌트)를 하나 만들기.
-	ID3D11InputLayout* vertexLayout;
-	ID3D11Buffer* vertexBuffer;
-	ID3D11Buffer* indexBuffer;
-
-	std::unique_ptr<MyShader> shader;
+	std::shared_ptr<MyShader> shader;
+	std::shared_ptr<Buffer> buffer;
 	std::shared_ptr<Transform> transform;
 	std::shared_ptr<Texture> texture;
-
-	UINT stride;
-	UINT offset;
 	
 public:
 	MyRectangle(ID3D11Device* dev, ID3D11DeviceContext* con);
@@ -29,32 +24,10 @@ public:
 
 	void Render();
 
-	__forceinline ID3D11InputLayout* GetVertexLayout();
-	__forceinline ID3D11Buffer* const* GetVertexBuffer();
 	ID3D11VertexShader* GetVertexShader();
 	ID3D11PixelShader* GetPixelShader();
-	__forceinline const UINT* GetStride() const;
-	__forceinline const UINT* GetOffset() const;
 
+	std::shared_ptr<Buffer> GetBuffer();
 	std::shared_ptr<Transform> GetTransform();
 };
 
-ID3D11InputLayout* MyRectangle::GetVertexLayout()
-{
-	return vertexLayout;
-}
-
-ID3D11Buffer* const* MyRectangle::GetVertexBuffer()
-{
-	return &vertexBuffer;
-}
-
-const UINT* MyRectangle::GetStride() const
-{
-	return &stride;
-}
-
-const UINT* MyRectangle::GetOffset() const
-{
-	return &offset;
-}
